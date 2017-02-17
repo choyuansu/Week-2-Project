@@ -2,7 +2,7 @@
   require_once('db_credentials.php');
 
   function db_connect() {
-    $connection = mysqli_connect(localhost, 'root', 'Alex318!', 'globitek');
+    $connection = mysqli_connect('localhost', 'root', 'Alex318!', 'globitek');
     if(mysqli_connect_errno()) {
       $msg = "Database connection failed: ";
       $msg .= mysqli_connect_error();

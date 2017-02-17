@@ -176,8 +176,8 @@
       $errors[] = "State code must be a valid format";
     }
 
-    if (!has_valid_id($state['country_id'])) {
-    
+    if (!country_exists($state['country_id'])) {
+      redirect_to('../error.php');
     }
 
     return $errors;
@@ -335,6 +335,10 @@
       $errors[] = "Territory position cannot be blank.";
     } elseif (!has_valid_territory_position_format($territory['position'])) {
       $errors[] = "Territory position must be a valid format";
+    }
+
+    if (!state_exists($territory['state_id'])) {
+      redirect_to('../error.php');
     }
 
     return $errors;

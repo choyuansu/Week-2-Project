@@ -113,7 +113,27 @@
     return false;
   }
 
+  // My custom validation 11
+  // has_valid_state_id('1234567890')
   function has_valid_state_id($value='') {
     return preg_match("/^[0-9]+$/", $value);
+  }
+
+  // My custom validation 12
+  // country_exists('1234567890')
+  function country_exists($country_id='') {
+    $country_id = sanitize_number($country_id);
+    $result = find_country_by_id($country_id);
+    $country = db_fetch_assoc($result);
+    return !empty($country);
+  }
+
+  // My custom validation 13
+  // state_exists('1234567890')
+  function state_exists($state_id='') {
+    $state_id = sanitize_number($state_id);
+    $result = find_state_by_id($state_id);
+    $state = db_fetch_assoc($result);
+    return !empty($state);
   }
 ?>
