@@ -26,7 +26,6 @@
   }
 
   function validate_country($country, $errors=array()) {
-    // TODO add validations
     if (is_blank($country['name'])) {
       $errors[] = "Country name cannot be blank.";
     } elseif (!has_length($country['name'], array('min' => 2, 'max' => 255))) {
@@ -163,7 +162,6 @@
   }
 
   function validate_state($state, $errors=array()) {
-    // TODO add validations
     if (is_blank($state['name'])) {
       $errors[] = "State name cannot be blank.";
     } elseif (!has_length($state['name'], array('min' => 2, 'max' => 255))) {
@@ -176,6 +174,10 @@
       $errors[] = "State code cannot be blank.";
     } elseif (!has_valid_state_code_format($state['code'])) {
       $errors[] = "State code must be a valid format";
+    }
+
+    if (!has_valid_id($state['country_id'])) {
+    
     }
 
     return $errors;
