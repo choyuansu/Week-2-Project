@@ -27,10 +27,6 @@ if(is_post_request()) {
     redirect_to('show.php?id=' . $user['id']);
   } else {
     $errors = $result;
-    $user['first_name'] = htmlspecialchars($user['first_name'], ENT_QUOTES);
-    $user['last_name'] = htmlspecialchars($user['last_name'], ENT_QUOTES);
-    $user['username'] = htmlspecialchars($user['username'], ENT_QUOTES);
-    $user['email'] = htmlspecialchars($user['email'], ENT_QUOTES);
   }
 }
 ?>
@@ -59,4 +55,5 @@ if(is_post_request()) {
 
 </div>
 
+<?php db_free_result($users_result); ?>
 <?php include(SHARED_PATH . '/footer.php'); ?>

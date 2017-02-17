@@ -8,13 +8,17 @@ $id = $_GET['id'];
 $state_result = find_state_by_id($id);
 // No loop, only one result
 $state = db_fetch_assoc($state_result);
+
+$country_result = find_country_by_id($state['country_id']);
+// No loop, only one result
+$country = db_fetch_assoc($country_result);
 ?>
 
 <?php $page_title = 'Staff: State of ' . $state['name']; ?>
 <?php include(SHARED_PATH . '/header.php'); ?>
 
 <div id="main-content">
-  <a href="index.php">Back to States List</a><br />
+  <a href="../countries/show.php?id=<?php echo $country['id']; ?>">Back to Country Details</a><br />
 
   <h1>State: <?php echo $state['name']; ?></h1>
 
@@ -29,13 +33,22 @@ $state = db_fetch_assoc($state_result);
     echo "<td>" . $state['code'] . "</td>";
     echo "</tr>";
     echo "<tr>";
-    echo "<td>Country ID: </td>";
-    echo "<td>" . $state['country_id'] . "</td>";
+    echo "<td>Country: </td>";
+    echo "<td>" . $country['name'] . "</td>";
+    echo "</tr>";
+    echo "</table>";
+
+    echo "<table id=\"actions\">";
+    echo "<tr>";
+    echo "<td>";
+    echo "<a href=\"edit.php?id=". $state['id'] . "\">Edit</a>";
+    echo "</td>";
+    echo "<td>";
+    echo "<a href=\"delete.php?id=". $state['id'] . "\">Delete</a>";
+    echo "</td>";
     echo "</tr>";
     echo "</table>";
 ?>
-    <br />
-    <a href="edit.php?id=<?php echo $state['id']; ?>">Edit</a><br />
     <hr />
 
     <h2>Territories</h2>

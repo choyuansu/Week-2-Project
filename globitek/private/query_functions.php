@@ -14,6 +14,116 @@
     return $country_result;
   }
 
+  function find_country_by_id($id='') {
+    global $db;
+
+    $id = sanitize_number($id);
+
+    $sql = "SELECT * FROM countries ";
+    $sql .= "WHERE id='" . $id . "' LIMIT 1;";
+    $country_result = db_query($db, $sql);
+    return $country_result;
+  }
+
+  function validate_country($country, $errors=array()) {
+    // TODO add validations
+    if (is_blank($country['name'])) {
+      $errors[] = "Country name cannot be blank.";
+    } elseif (!has_length($country['name'], array('min' => 2, 'max' => 255))) {
+      $errors[] = "Country name must be between 2 and 255 characters.";
+    } elseif (!has_valid_country_name_format($country['name'])) {
+      $errors[] = "Country name must be a valid format";
+    } elseif (has_duplicate_country_name($country['name'])) {
+      $errors[] = "The country name is already in use.";
+    }
+
+    if (is_blank($country['code'])) {
+      $errors[] = "Country code cannot be blank.";
+    } elseif (!has_valid_state_code_format($country['code'])) {
+      $errors[] = "Country code must be a valid format";
+    } elseif (has_duplicate_country_code($country['code'])) {
+      $errors[] = "The country code is already in use.";
+    }
+
+    return $errors;
+  }
+
+  function insert_country($country) {
+    global $db;
+
+    $errors = validate_country($country);
+    if (!empty($errors)) {
+      return $errors;
+    }
+
+    $country['name'] = sanitize_string($country['name']);
+    $country['code'] = sanitize_string($country['code']);
+
+    $sql = "INSERT INTO countries ";
+    $sql .= "(name, code) ";
+    $sql .= "VALUES (";
+    $sql .= "'" . $country['name'] . "',";
+    $sql .= "'" . $country['code'] . "'";
+    $sql .= ");";
+    $result = db_query($db, $sql);
+    if($result) {
+      return true;
+    } else {
+      // The SQL INSERT statement failed.
+      // Just show the error, not the form
+      echo db_error($db);
+      db_close($db);
+      exit;
+    }
+  }
+
+  function update_country($country) {
+    global $db;
+
+    $errors = validate_country($country);
+    if (!empty($errors)) {
+      return $errors;
+    }
+
+    $country['name'] = sanitize_string($country['name']);
+    $country['code'] = sanitize_string($country['code']);
+    $country['id'] = sanitize_number($country['id']);
+
+    $sql = "UPDATE countries SET ";
+    $sql .= "name='" . $country['name'] . "', ";
+    $sql .= "code='" . $country['code'] . "' ";
+    $sql .= "WHERE id='" . $country['id'] . "' ";
+    $sql .= "LIMIT 1;";
+    // For update_state statments, $result is just true/false
+    $result = db_query($db, $sql);
+    if($result) {
+      return true;
+    } else {
+      // The SQL UPDATE statement failed.
+      // Just show the error, not the form
+      echo db_error($db);
+      db_close($db);
+      exit;
+    }
+  }
+
+  // Delete a country record
+  function delete_country_by_id($id) {
+    global $db;
+
+    $id = sanitize_number($id);
+
+    $result = delete_states_by_country_id($id);
+    if($result === true) {
+      $sql = "DELETE FROM countries WHERE id='" . $id . "' LIMIT 1;";
+      $countries_result = db_query($db, $sql);
+      return $countries_result;
+    }
+    else {
+      return $result; 
+    }
+  }
+
   //
   // STATE QUERIES
   //
@@ -31,7 +141,7 @@
   function find_states_for_country_id($country_id=0) {
     global $db;
 
-    $country_id = sanitize_string($country_id);
+    $country_id = sanitize_number($country_id);
 
     $sql = "SELECT * FROM states ";
     $sql .= "WHERE country_id='" . $country_id . "' ";
@@ -41,10 +151,10 @@
   }
 
   // Find state by ID
-  function find_state_by_id($id=0) {
+  function find_state_by_id($id='') {
     global $db;
     
-    $id = sanitize_string($id);
+    $id = sanitize_number($id);
     
     $sql = "SELECT * FROM states ";
     $sql .= "WHERE id='" . $id . "';";
@@ -83,7 +193,7 @@
 
     $state['name'] = sanitize_string($state['name']);
     $state['code'] = sanitize_string($state['code']);
-    $state['country_id'] = sanitize_string($state['country_id']);
+    $state['country_id'] = sanitize_number($state['country_id']);
 
     $sql = "INSERT INTO states ";
     $sql .= "(name, code, country_id) ";
@@ -117,7 +227,8 @@
     
     $state['name'] = sanitize_string($state['name']);
     $state['code'] = sanitize_string($state['code']);
-    $state['country_id'] = sanitize_string($state['country_id']);
+    $state['country_id'] = sanitize_number($state['country_id']);
+    $state['id'] = sanitize_number($state['id']);
 
     $sql = "UPDATE states SET ";
     $sql .= "name='" . $state['name'] . "', ";
@@ -137,6 +248,39 @@
     }
   }
 
+  // Delete a state record
+  function delete_state_by_id($id) {
+    global $db;
+
+    $id = sanitize_number($id);
+
+    $result = delete_territories_by_state_id($id);
+    if($result === true) {
+      $sql = "DELETE FROM states WHERE id='" . $id . "' LIMIT 1;";
+      $states_result = db_query($db, $sql);
+      return $states_result;
+    }
+    else {
+      return $result; 
+    }
+  }
+
+  // Delete all states records in a country
+  function delete_states_by_country_id($country_id) {
+    global $db;
+
+    $country_id = sanitize_number($country_id);
+
+    $states_result = find_states_for_country_id($country_id);
+    while($state = db_fetch_assoc($states_result)) {
+      $result = delete_state_by_id($state['id']);
+      if($result === false) {
+        return $result;
+      }
+    }
+    return true;
+  }
+
   //
   // TERRITORY QUERIES
   //
@@ -154,7 +298,7 @@
   function find_territories_for_state_id($state_id=0) {
     global $db;
     
-    $state_id = sanitize_string($state_id);
+    $state_id = sanitize_number($state_id);
 
     $sql = "SELECT * FROM territories ";
     $sql .= "WHERE state_id='" . $state_id . "' ";
@@ -164,10 +308,10 @@
   }
 
   // Find territory by ID
-  function find_territory_by_id($id=0) {
+  function find_territory_by_id($id='') {
     global $db;
 
-    $id = sanitize_string($id);
+    $id = sanitize_number($id);
 
     $sql = "SELECT * FROM territories ";
     $sql .= "WHERE id='" . $id . "';";
@@ -205,8 +349,8 @@
     }
 
     $territory['name'] = sanitize_string($territory['name']);
-    $territory['state_id'] = sanitize_string($territory['state_id']);
-    $territory['position'] = sanitize_string($territory['position']);
+    $territory['state_id'] = sanitize_number($territory['state_id']);
+    $territory['position'] = sanitize_number($territory['position']);
 
     $sql = "INSERT INTO territories ";
     $sql .= "(name, state_id, position) ";
@@ -239,8 +383,9 @@
     }
 
     $territory['name'] = sanitize_string($territory['name']);
-    $territory['state_id'] = sanitize_string($territory['state_id']);
-    $territory['position'] = sanitize_string($territory['position']);
+    $territory['state_id'] = sanitize_number($territory['state_id']);
+    $territory['position'] = sanitize_number($territory['position']);
+    $territory['id'] = sanitize_number($territory['id']);
 
     $sql = "UPDATE territories SET ";
     $sql .= "name='" . $territory['name'] . "', ";
@@ -252,12 +397,34 @@
     if($result) {
       return true;
     } else {
-      // The SQL UPDATE territoryment failed.
+      // The SQL UPDATE statement failed.
       // Just show the error, not the form
       echo db_error($db);
       db_close($db);
       exit;
     }
+  }
+
+  // Delete a territory record
+  function delete_territory_by_id($id) {
+    global $db;
+
+    $id = sanitize_number($id);
+    
+    $sql = "DELETE FROM territories WHERE id='" . $id . "' LIMIT 1;";
+    $territories_result = db_query($db, $sql);
+    return $territories_result;
+  }
+
+  // Delete all territory records in a state
+  function delete_territories_by_state_id($state_id) {
+    global $db;
+
+    $state_id = sanitize_number($state_id);
+    
+    $sql = "DELETE FROM territories WHERE state_id='" . $state_id . "';";
+    $territories_result = db_query($db, $sql);
+    return $territories_result;
   }
 
   //
@@ -278,6 +445,9 @@
   // in the join table which have the same territory ID.
   function find_salespeople_for_territory_id($territory_id=0) {
     global $db;
+
+    $territory_id = sanitize_number($territory_id);
+
     $sql = "SELECT * FROM salespeople ";
     $sql .= "LEFT JOIN salespeople_territories
               ON (salespeople_territories.salesperson_id = salespeople.id) ";
@@ -288,10 +458,10 @@
   }
 
   // Find salesperson using id
-  function find_salesperson_by_id($id=0) {
+  function find_salesperson_by_id($id='') {
     global $db;
     
-    $id = sanitize_string($id);
+    $id = sanitize_number($id);
 
     $sql = "SELECT * FROM salespeople ";
     $sql .= "WHERE id='" . $id . "';";
@@ -382,6 +552,7 @@
     $salesperson['last_name'] = sanitize_string($salesperson['last_name']);
     $salesperson['phone'] = sanitize_string($salesperson['phone']);
     $salesperson['email'] = sanitize_string($salesperson['email']);
+    $salesperson['id'] = sanitize_number($salesperson['id']);
 
     $sql = "UPDATE salespeople SET ";
     $sql .= "first_name='" . $salesperson['first_name'] . "', ";
@@ -403,13 +574,24 @@
     }
   }
 
+  // Delete a salesperson record
+  function delete_salesperson_by_id($id) {
+    global $db;
+
+    $id = sanitize_number($id);
+    
+    $sql = "DELETE FROM salespeople WHERE id='" . $id . "' LIMIT 1;";
+    $salespeople_result = db_query($db, $sql);
+    return $salespeople_result;
+  }
+
   // To find territories, we need to use the join table.
   // We LEFT JOIN salespeople_territories and then find results
   // in the join table which have the same salesperson ID.
-  function find_territories_by_salesperson_id($id=0) {
+  function find_territories_by_salesperson_id($id='') {
     global $db;
     
-    $id = sanitize_string($id);
+    $id = sanitize_number($id);
     
     $sql = "SELECT * FROM territories ";
     $sql .= "LEFT JOIN salespeople_territories
@@ -434,10 +616,10 @@
   }
 
   // Find user using id
-  function find_user_by_id($id=0) {
+  function find_user_by_id($id='') {
     global $db;
-    
-    $id = sanitize_string($id);
+
+    $id = sanitize_number($id);
     
     $sql = "SELECT * FROM users WHERE id='" . $id . "' LIMIT 1;";
     $users_result = db_query($db, $sql);
@@ -474,7 +656,7 @@
       $errors[] = "Username must be less than 255 characters.";
     } elseif (!has_valid_username_format($user['username'])) {
       $errors[] = "Username must contain only alphabets, numbers, and underscores.";
-    } elseif ( has_duplicate_username($user['username'])) {
+    } elseif (has_duplicate_username($user)) {
       $errors[] = "The username is already in use.";
     }
     return $errors;
@@ -532,6 +714,7 @@
     $user['last_name'] = sanitize_string($user['last_name']);
     $user['email'] = sanitize_string($user['email']);
     $user['username'] = sanitize_string($user['username']);
+    $user['id'] = sanitize_number($user['id']);
 
     $sql = "UPDATE users SET ";
     $sql .= "first_name='" . $user['first_name'] . "', ";
@@ -554,8 +737,22 @@
   }
 
   // Delete a user record
-  function delete_user($user) {
-  
+  function delete_user_by_id($id) {
+    global $db;
+    
+    $id = sanitize_number($id);
+    
+    $sql = "DELETE FROM users WHERE id='" . $id . "' LIMIT 1;";
+    $users_result = db_query($db, $sql);
+    if($users_result) {
+      return true;
+    } else {
+      // The SQL DELETE statement failed.
+      // Just show the error, not the form
+      echo db_error($db);
+      db_close($db);
+      exit;
+    }
   }
 
 ?>

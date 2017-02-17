@@ -5,19 +5,22 @@ if(!isset($_GET['id'])) {
   redirect_to('index.php');
 }
 
-
-
 $users_result = find_user_by_id($_GET['id']);
 // No loop, only one result
 $user = db_fetch_assoc($users_result);
 
 if(is_post_request()) {
-  $result = delete_user($user);
-  if($result === true) {
-    redirect_to('index.php');
+  if(isset($_POST['Yes'])) {
+    $result = delete_user_by_id($user['id']);
+    if($result === true) {
+      redirect_to('index.php');
+    }
+    else {
+      echo 'Something went wrong!'; 
+    }
   }
-  else {
-    $errors = $result;
+  elseif(isset($_POST['No'])) {
+    redirect_to('show.php?id=' . $user['id']);
   }
 }
 ?>
@@ -34,8 +37,8 @@ if(is_post_request()) {
     <input type="submit" name="Yes" value="Yes">
     <input type="submit" name="No" value="No">
   </form>
-
 </div>
 
+<?php db_free_result($users_result); ?>
 <?php include(SHARED_PATH . '/footer.php'); ?>
 

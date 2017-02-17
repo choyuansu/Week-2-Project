@@ -20,6 +20,7 @@
     echo "<th>Last name</th>";
     echo "<th></th>";
     echo "<th></th>";
+    echo "<th></th>";
     echo "</tr>";
     while($salesperson = db_fetch_assoc($salespeople_result)) {
       echo "<tr>";
@@ -30,6 +31,9 @@
       echo "</td>";
       echo "<td>";
       echo "<a href=\"edit.php?id=" . $salesperson['id'] . "\">Edit</a>";
+      echo "</td>";
+      echo "<td>";
+      echo "<a href=\"delete.php?id=" . $salesperson['id'] . "\">Delete</a>";
       echo "</td>";
       echo "</tr>";
     } // end while $salesperson

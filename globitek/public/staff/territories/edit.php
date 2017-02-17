@@ -31,7 +31,7 @@ if(is_post_request()) {
 <?php include(SHARED_PATH . '/header.php'); ?>
 
 <div id="main-content">
-  <a href="../states/show.php?id=<?php echo $territory['state_id']; ?>">Back to State Details</a><br />
+  <a href="show.php?id=<?php echo $territory['id']; ?>">Back to Territory Details</a><br />
 
   <h1>Edit Territory: <?php echo $name; ?></h1>
 
@@ -48,4 +48,5 @@ if(is_post_request()) {
 
 </div>
 
+<?php db_free_result($territories_result); ?>
 <?php include(SHARED_PATH . '/footer.php'); ?>

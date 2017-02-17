@@ -21,6 +21,7 @@
     echo "<th>Username</th>";
     echo "<th></th>";
     echo "<th></th>";
+    echo "<th></th>";
     echo "</tr>";
     while($user = db_fetch_assoc($users_result)) {
       echo "<tr>";
@@ -32,6 +33,9 @@
       echo "</td>";
       echo "<td>";
       echo "<a href=\"edit.php?id=" . $user['id'] . "\">Edit</a>";
+      echo "</td>";
+      echo "<td>";
+      echo "<a href=\"delete.php?id=" . $user['id'] . "\">Delete</a>";
       echo "</td>";
       echo "</tr>";
     } // end while $user

@@ -5,15 +5,16 @@ require_once('../../../private/initialize.php');
 $errors = array();
 $state = array(
   'name' => '',
-  'code' => ''
+  'code' => '',
+  'country_id' =>''
 );
 
+if(isset($_GET['country_id'])) { $state['country_id'] = $_GET['country_id']; }
 if(is_post_request()) {
 
   // Confirm that values are present before accessing them.
   if(isset($_POST['name'])) { $state['name'] = $_POST['name']; }
   if(isset($_POST['code'])) { $state['code'] = $_POST['code']; }
-  $state['country_id'] = 1;
 
   $result = insert_state($state);
   if($result === true) {
@@ -28,13 +29,13 @@ if(is_post_request()) {
 <?php include(SHARED_PATH . '/header.php'); ?>
 
 <div id="main-content">
-  <a href="index.php">Back to States List</a><br />
+  <a href="../countries/show.php?id=<?php echo $state['country_id']; ?>">Back to Country Details</a><br />
 
   <h1>New State</h1>
 
   <?php echo display_errors($errors); ?>
 
-  <form action="new.php" method="post">
+  <form action="new.php?country_id=<?php echo $state['country_id']; ?>" method="post">
     Name:<br />
     <input type="text" name="name" value="<?php echo $state['name']; ?>" /><br />
     Code:<br />

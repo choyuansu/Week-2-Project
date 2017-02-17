@@ -39,11 +39,19 @@ $state = db_fetch_assoc($state_result);
     echo "</tr>";
     echo "</table>";
 
+    echo "<table id=\"actions\">";
+    echo "<tr>";
+    echo "<td>";
+    echo "<a href=\"edit.php?id=". $territory['id'] . "\">Edit</a>";
+    echo "</td>";
+    echo "<td>";
+    echo "<a href=\"delete.php?id=". $territory['id'] . "\">Delete</a>";
+    echo "</td>";
+    echo "</tr>";
+    echo "</table>";
+    
     db_free_result($territory_result);
   ?>
-  <br />
-  <a href="edit.php?id=<?php echo $territory['id'];?>">Edit</a><br />
-
 </div>
 
 <?php include(SHARED_PATH . '/footer.php'); ?>

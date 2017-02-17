@@ -34,11 +34,19 @@ $user = db_fetch_assoc($users_result);
     echo "</tr>";
     echo "</table>";
 
+    echo "<table id=\"actions\">";
+    echo "<tr>";
+    echo "<td>";
+    echo "<a href=\"edit.php?id=". $user['id'] . "\">Edit</a>";
+    echo "</td>";
+    echo "<td>";
+    echo "<a href=\"delete.php?id=". $user['id'] . "\">Delete</a>";
+    echo "</td>";
+    echo "</tr>";
+    echo "</table>";
+
     db_free_result($users_result);
   ?>
-  <br />
-  <a href="edit.php?id=<?php echo $user['id']; ?>">Edit</a><br />
-  <a href="delete.php?id=<?php echo $user['id']; ?>">Delete</a><br />
 
 </div>
 

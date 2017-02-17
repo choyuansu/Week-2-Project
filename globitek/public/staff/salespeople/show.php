@@ -34,10 +34,19 @@ $salesperson = db_fetch_assoc($salespeople_result);
     echo "</tr>";
     echo "</table>";
 
+    echo "<table id=\"actions\">";
+    echo "<tr>";
+    echo "<td>";
+    echo "<a href=\"edit.php?id=". $salesperson['id'] . "\">Edit</a>";
+    echo "</td>";
+    echo "<td>";
+    echo "<a href=\"delete.php?id=". $salesperson['id'] . "\">Delete</a>";
+    echo "</td>";
+    echo "</tr>";
+    echo "</table>";
+
     db_free_result($salespeople_result);
   ?>
-  <br />
-  <a href="edit.php?id=<?php echo $salesperson['id']; ?>">Edit</a><br />
 </div>
 
 <?php include(SHARED_PATH . '/footer.php'); ?>

@@ -56,4 +56,5 @@ if(is_post_request()) {
 
 </div>
 
+<?php db_free_result($salespeople_result); ?>
 <?php include(SHARED_PATH . '/footer.php'); ?>

@@ -21,7 +21,8 @@
 
   // has_valid_email_format('test@test.com')
   function has_valid_email_format($value) {
-    return preg_match('/^[A-Za-z0-9(@)\._-]+$/', $value);
+    return preg_match('/^[A-Za-z0-9(@)\._-]+$/', $value) &&
+           filter_var($value, FILTER_VALIDATE_EMAIL);
   }
 
   // has_valid_username_format('username')
@@ -66,12 +67,49 @@
   
   // My custom validation 6
   // has_duplicate_username('username')
-  function has_duplicate_username($username='') {
+  function has_duplicate_username($user=array()) {
     global $db;
-    $sql = "SELECT username FROM users WHERE username='" . $username . "';";
+    $sql = "SELECT username FROM users ";
+    $sql .= "WHERE username='" . $user['username'];
+    $sql .= "' AND id!='" . $user['id'] . "';";
     $result = db_query($db, $sql);
     if( db_num_rows($result) > 0) return true;
     return false;
   }
 
+  // My custom validation 7
+  // has_valid_country_name_format('country_name')
+  function has_valid_country_name_format($value) {
+    return preg_match('/^[A-Za-z\s]+$/', $value);
+  }
+
+  // My custom validation 8
+  // has_valid_country_code_format('country_code')
+  function has_valid_country_code_format($value) {
+    return preg_match("/^[A-Z]{2}+$/", $value);
+  }
+
+  // My custom validation 9
+  // has_duplicate_country_name
+  function has_duplicate_country_name($value) {
+    global $db;
+    $sql = "SELECT name FROM countries ";
+    $sql .= "WHERE name='" . $country['name'];
+    $sql .= "' AND id!='" . $country['id'] . "';";
+    $result = db_query($db, $sql);
+    if( db_num_rows($result) > 0) return true;
+    return false;
+  }
+
+  // My custom validation 10
+  // has_duplicate_country_code
+  function has_duplicate_country_code($value) {
+    global $db;
+    $sql = "SELECT code FROM countries ";
+    $sql .= "WHERE code='" . $country['code'];
+    $sql .= "' AND id!='" . $country['id'] . "';";
+    $result = db_query($db, $sql);
+    if( db_num_rows($result) > 0) return true;
+    return false;
+  }
 ?>
