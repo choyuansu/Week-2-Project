@@ -75,7 +75,15 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+Additional features:
+- delete.php for countries, states, territories, and salespeople
+- deleting states deletes territories under it
+- deleting countries deletes states and territories under it
+- Check duplicates for country name and country code
+- Takes user to error.php they insert a territory for an invalid state id
+- Takes user to error.php they insert a state for an invalid country id
+- Restrict phone format to xxx-xxx-xxxx
+- Add filter_var for email validation
 
 ## License
 

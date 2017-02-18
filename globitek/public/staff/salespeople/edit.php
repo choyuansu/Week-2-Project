@@ -35,7 +35,7 @@ if(is_post_request()) {
 <?php include(SHARED_PATH . '/header.php'); ?>
 
 <div id="main-content">
-  <a href="index.php">Back to Salespeople List</a><br />
+  <a href="show.php?id=<?php echo $salesperson['id']; ?>">Cancel</a><br />
 
   <h1>Edit Salesperson: <?php echo $first_name . " " . $last_name; ?></h1>
 

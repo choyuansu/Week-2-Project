@@ -30,7 +30,7 @@ if(is_post_request()) {
 <?php include(SHARED_PATH . '/header.php'); ?>
 
 <div id="main-content">
-  <a href="index.php">Back to Countries List</a><br />
+  <a href="show.php?id=<?php echo $country['id']; ?>">Cancel</a><br />
 
   <h1>Edit Country: <?php echo $name; ?></h1>
 

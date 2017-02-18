@@ -31,7 +31,7 @@ if(is_post_request()) {
 <?php include(SHARED_PATH . '/header.php'); ?>
 
 <div id="main-content">
-  <a href="show.php?id=<?php echo $territory['id']; ?>">Back to Territory Details</a><br />
+  <a href="show.php?id=<?php echo $territory['id']; ?>">Cancel</a><br />
 
   <h1>Edit Territory: <?php echo $name; ?></h1>
 
